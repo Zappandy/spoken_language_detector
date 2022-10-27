@@ -21,6 +21,6 @@ do
 	cp -a $file $2
 done
 
-zip -r test_set_es.zip $2
+zip -r test_set_es.zip $2  # zips in dir where it's being run from
 
 #echo $og_dir
