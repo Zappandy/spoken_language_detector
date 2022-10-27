@@ -1,28 +1,51 @@
 import torch
+import fnmatch
 import matplotlib.pyplot as plt
+import soundfile as sf
+import os
 from torch.utils.data import DataLoader, Dataset, random_split, Subset
 
-# ls /media/andres/2D2DA2454B8413B5/test/test/ | grep -o '.....$' | uniq   
-train_dir = "/media/andres/2D2DA2454B8413B5/train/train/"
-test_dir = "/media/andres/2D2DA2454B8413B5/test/test/"
+
+# used to clean up es files
+# ls /media/andres/2D2DA2454B8413B5/test/test/ | grep -o '.....$' | uniq   # exploring file types
+#/media/andres/2D2DA2454B8413B5/test/test/ | grep -o '^es.*'
+base_path = "/media/andres/2D2DA2454B8413B5/"
+train_dir = base_path + "train/train/"
+test_dir = base_path + "test/test/"
 
 class SpeechDataset(Dataset):
 
-    def __init__(self):
-        numbers = [i for i in range(100)]
-        self.data = numbers
+    def __init__(self, flac_dir):
+        self.audio_path_list = sorted(self.find_files(flac_dir))
 
     def __len__(self):
-        return len(self.data)
+        return len(self.audio_path_list)
 
     def __getitem__(self, index):
-        return self.data[index]
+        audio_path = self.audio_path_list[index]
+        with open(audio_path, "rb") as f:
+            data, samplerate = sf.read(f)
+        return data, samplerate
 
-train_data = SpeechDataset()
-dataloader = DataLoader(train_data, batch_size=10, shuffle=True)
+    def find_files(self, directory, pattern="*.flac"):
+        """
+        Recursive search method to find files. Credit to Paul Magron for OG method
+        """
+        audio_path_list = []
+        for root, dirnames, filenames in os.walk(directory):
+            for filename in fnmatch.filter(filenames, pattern):
+                audio_path_list.append(os.path.join(root, filename))
 
-for i, batch in enumerate(dataloader):
-    print(i, batch)
+        return audio_path_list
+
+test_data = SpeechDataset(test_dir)  # 540
+test_dataloader = DataLoader(test_data, batch_size=4, shuffle=True)
+
+for data, samplerate in test_dataloader:
+    print(data, samplerate)
+    print()
+    print(data.shape, samplerate.shape)
+    break
 
 raise SystemExit
 train_data = Subset(train_data, torch.arange(240)) # 80% 
