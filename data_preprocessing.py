@@ -6,6 +6,7 @@ import fnmatch
 import matplotlib.pyplot as plt
 import soundfile as sf  # maybe unneeded if all loading performed with librosa!
 import librosa
+import librosa.display
 import os
 from torch.utils.data import DataLoader, Dataset, random_split, Subset
 
@@ -20,6 +21,7 @@ base_path = "/media/andres/2D2DA2454B8413B5/"
 train_dir = base_path + "train/train/"
 test_dir = base_path + "test/test/"
 
+# defining class
 
 class SpeechDataset(Dataset):
 
@@ -106,10 +108,11 @@ class SpeechDataset(Dataset):
         plt.tight_layout()
         plt.show()
 
+# example, tst data has 540 files
 
-test_data = SpeechDataset(test_dir, "librosa")  # 540
+test_data = SpeechDataset(test_dir, "librosa")
 test_dataloader = DataLoader(test_data, batch_size=4, shuffle=True)
-train_data = SpeechDataset(train_dir, "librosa")  # 540
+train_data = SpeechDataset(train_dir, "librosa")
 train_dataloader = DataLoader(train_data, batch_size=4, shuffle=True)
 
 #melspec_test = next(iter(test_dataloader))
@@ -121,3 +124,5 @@ test_data = Subset(test_data, torch.arange(60))  # 20%
 
 train_dataloader = DataLoader(train_data, batch_size=16, shuffle=True)
 test_dataloader = DataLoader(test_data, batch_size=16, shuffle=True)
+
+# lest' test visualizations
