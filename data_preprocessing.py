@@ -21,8 +21,6 @@ base_path = "/media/andres/2D2DA2454B8413B5/"
 train_dir = base_path + "train/train/"
 test_dir = base_path + "test/test/"
 
-# defining class
-
 class SpeechDataset(Dataset):
 
     def __init__(self, flac_dir, load_method):
@@ -70,12 +68,13 @@ class SpeechDataset(Dataset):
             padded_array = np.zeros(fs)
             padded_array[:np.shape(sig)[0]] = sig
             sig = padded_array
-            print("padding!!!")
 
         melspec = librosa.feature.melspectrogram(y=sig, sr=fs,
                                                  center=True, n_fft=n_fft,
                                                  hop_length=hop_length, n_mels=n_mels)
 
+
+        self.plotmelspec(melspec, fs, hop_length)
 
         melspec = librosa.power_to_db(melspec, ref=1.0)
         melspec /= 80.0  # highest db...
@@ -96,7 +95,7 @@ class SpeechDataset(Dataset):
         # should we save it? check speech gan assignment script
         return melspec
 
-    def plotmelspec(self, melspec, fs, hop_length, save=False):
+    def plotmelspec(self, melspec, fs, hop_length, show=False):
         plt.figure(figsize=(8, 6))
         plt.xlabel("Time")
         plt.ylabel("Mel-Frequency")
@@ -106,7 +105,8 @@ class SpeechDataset(Dataset):
         plt.colorbar(format="%+2.0f db")
         plt.title("Mel Spectogram")
         plt.tight_layout()
-        plt.show()
+        if show:
+            plt.show()
 
 # example, tst data has 540 files
 
@@ -115,8 +115,6 @@ test_dataloader = DataLoader(test_data, batch_size=4, shuffle=True)
 train_data = SpeechDataset(train_dir, "librosa")
 train_dataloader = DataLoader(train_data, batch_size=4, shuffle=True)
 
-#melspec_test = next(iter(test_dataloader))
-#print(melspec_test)
 
 #TODO  finish up the splits
 train_data = Subset(train_data, torch.arange(240)) # 80% 
@@ -125,4 +123,7 @@ test_data = Subset(test_data, torch.arange(60))  # 20%
 train_dataloader = DataLoader(train_data, batch_size=16, shuffle=True)
 test_dataloader = DataLoader(test_data, batch_size=16, shuffle=True)
 
-# lest' test visualizations
+# test visualizations
+
+melspec_test = next(iter(test_dataloader))
+print(melspec_test)

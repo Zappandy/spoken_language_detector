@@ -19,3 +19,4 @@ These tools were only used to run .ipynb files and facilitate visualizations!
 
 [Jupyterlab guide](https://jupyter.org/install)
 
+Python script to jupyter-notebook [converter](https://laptrinhx.com/convert-python-script-to-jupyter-notebook-and-vice-versa-1653154340/)
