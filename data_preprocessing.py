@@ -49,7 +49,15 @@ class SpeechDataset(Dataset):
         transform = T.MelSpectrogram(sample_rate)        
         return transform(waveform), sample_rate
         
+    def sf_loader(self, file_path):
+        with open(file_path, "rb") as f:
+            data, samplerate = sf.read(f)
+        return data, samplerate
+
     def flac2melspec(self, file_path, n_mels=64, melspec_size=512):
+        """
+        the librosa method we are using atm
+        """
         sig, fs =  librosa.load(file_path, sr=None)
         sig /= np.max(np.abs(sig), axis=0)
         n_fft = melspec_size
@@ -66,21 +74,44 @@ class SpeechDataset(Dataset):
                                                  center=True, n_fft=n_fft,
                                                  hop_length=hop_length, n_mels=n_mels)
 
-        # TODO:plotting?
 
         melspec = librosa.power_to_db(melspec, ref=1.0)
         melspec /= 80.0  # highest db...
         return melspec, fs
+
+    def checkmelspec(self, melspec, fs, path):
+        """
+        this method works with librosa
+
+        """
         #TODO: check melspec?
+        if melspec.shape[1] < 64:
+            shape = np.shape(melspec)
+            padded_array = np.zeros((shape[0], 64)) - 1
+            paddeed_array[0:shape[0], :shape[1]] = melspec
+            melspec = padded_array
+        # should we save it? check speech gan assignment script
+        return melspec
 
+    def plotmelspec(self, melspec, fs, hop_length, save=False):
+        plt.figure(figsize=(8, 6))
+        plt.xlabel("Time")
+        plt.ylabel("Mel-Frequency")
+        librosa.display.specshow(librosa.power_to_db(melspec, ref=np.max),
+                                 y_axis="mel", fmax=fs/2, sr=fs,
+                                 hop_length=hop_length, x_axis="time")
+        plt.colorbar(format="%+2.0f db")
+        plt.title("Mel Spectogram")
+        plt.tight_layout()
+        plt.show()
 
-    def sf_loader(self, file_path):
-        with open(file_path, "rb") as f:
-            data, samplerate = sf.read(f)
-        return data, samplerate
 
 test_data = SpeechDataset(test_dir, "librosa")  # 540
 test_dataloader = DataLoader(test_data, batch_size=4, shuffle=True)
+train_data = SpeechDataset(train_dir, "librosa")  # 540
+train_dataloader = DataLoader(train_data, batch_size=4, shuffle=True)
+trying = iter(test_dataloader)
+#print(next(trying))
 
 raise SystemExit
 
