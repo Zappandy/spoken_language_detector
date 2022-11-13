@@ -26,15 +26,15 @@ class SpeechDataset(Dataset):
     def __init__(self, flac_dir, load_method):
         self.audio_path_list = sorted(self.find_files(flac_dir))  # do we need them to be sorted?
         methods = {"librosa": self.flac2melspec, "soundfile": self.sf_loader, "torchaudio": self.flac_to_spectro}
-        chosen_method = methods[load_method]
-        self.specto_data = [chosen_method(audio) for audio in self.audio_path_list]
+        self.chosen_method = methods[load_method]
         
         
     def __len__(self):
-        return len(self.specto_data)
+        return len(self.audio_path_list)
 
     def __getitem__(self, index):
-        return self.specto_data[index]  
+        audio_file = self.audio_path_list[index]  
+        return self.chosen_method(audio_file)
 
     def find_files(self, directory, pattern=".flac"):
         """
@@ -77,15 +77,16 @@ class SpeechDataset(Dataset):
 
         melspec = librosa.power_to_db(melspec, ref=1.0)
         melspec /= 80.0  # highest db...
+        melspec = self.checkmelspec(melspec, fs)
         return melspec, fs
 
-    def checkmelspec(self, melspec, fs, path):
+    def checkmelspec(self, melspec, fs):
         """
         this method works with librosa
 
         """
         #TODO: check melspec?
-        if melspec.shape[1] < 64:
+        if melspec.shape[1] < 64:  # n_mels
             shape = np.shape(melspec)
             padded_array = np.zeros((shape[0], 64)) - 1
             paddeed_array[0:shape[0], :shape[1]] = melspec
@@ -110,10 +111,9 @@ test_data = SpeechDataset(test_dir, "librosa")  # 540
 test_dataloader = DataLoader(test_data, batch_size=4, shuffle=True)
 train_data = SpeechDataset(train_dir, "librosa")  # 540
 train_dataloader = DataLoader(train_data, batch_size=4, shuffle=True)
-trying = iter(test_dataloader)
-#print(next(trying))
 
-raise SystemExit
+#melspec_test = next(iter(test_dataloader))
+#print(melspec_test)
 
 #TODO  finish up the splits
 train_data = Subset(train_data, torch.arange(240)) # 80% 
