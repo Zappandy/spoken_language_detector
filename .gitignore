@@ -47,3 +47,5 @@ ipython_config.py
 # pyenv
 .python-version
 
+# wav files
+*.wav

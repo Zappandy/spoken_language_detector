@@ -20,3 +20,18 @@ These tools were only used to run .ipynb files and facilitate visualizations!
 [Jupyterlab guide](https://jupyter.org/install)
 
 Python script to jupyter-notebook [converter](https://laptrinhx.com/convert-python-script-to-jupyter-notebook-and-vice-versa-1653154340/)
+
+## Exploratory steps
+
+How did we clean up the files?
+
+```bash
+ls <dir> | grep -o '.....$' | uniq
+<dir> | grep -o '^es.*'  # finds the spanish ones
+```
+For our work, we used the test set found in local dirs such as
+```
+/media/andres/2D2DA2454B8413B5/test/test/
+```
+
+The final version is the file\_cleaner script found in this dir. That one copies the Spanish files to a new given dir as its second argument
