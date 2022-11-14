@@ -35,3 +35,9 @@ For our work, we used the test set found in local dirs such as
 ```
 
 The final version is the file\_cleaner script found in this dir. That one copies the Spanish files to a new given dir as its second argument
+
+## Theory
+
+The plots are fine?
+
+Tutorial on [mel spectograms](https://medium.com/analytics-vidhya/understanding-the-mel-spectrogram-fca2afa2ce53)
