@@ -38,6 +38,4 @@ The final version is the file\_cleaner script found in this dir. That one copies
 
 ## Theory
 
-The plots are fine?
-
 Tutorial on [mel spectograms](https://medium.com/analytics-vidhya/understanding-the-mel-spectrogram-fca2afa2ce53)
