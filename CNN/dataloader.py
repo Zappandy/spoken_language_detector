@@ -1,14 +1,12 @@
-import torch
 import torchaudio
 import torchaudio.transforms as T
 import numpy as np
-import fnmatch
 import matplotlib.pyplot as plt
 import soundfile as sf
 import librosa
 import librosa.display
 import os
-from torch.utils.data import DataLoader, Dataset, random_split, Subset
+from torch.utils.data import Dataset
 
 class SpeechDataset(Dataset):
 
@@ -67,10 +65,10 @@ class SpeechDataset(Dataset):
 
         melspec = librosa.power_to_db(melspec, ref=1.0)
         melspec /= 80.0  # highest db...
-        melspec = self.checkmelspec(melspec, fs)
+        melspec = self.checkmelspec(melspec)
         return melspec, fs
 
-    def checkmelspec(self, melspec, fs):
+    def checkmelspec(self, melspec):
         """
         this method works with librosa
 

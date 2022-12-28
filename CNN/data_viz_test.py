@@ -1,5 +1,7 @@
 # example, tst data has 540 files
 from dataloader import SpeechDataset
+import torch
+from torch.utils.data import DataLoader, Subset
 
 test_dir = "../Dataset/test/test"
 train_dir = "../Dataset/train/train"
