@@ -1,5 +1,8 @@
 # example, tst data has 540 files
+from dataloader import SpeechDataset
 
+test_dir = "../Dataset/test/test"
+train_dir = "../Dataset/train/train"
 test_data = SpeechDataset(test_dir, "librosa")
 test_dataloader = DataLoader(test_data, batch_size=4, shuffle=True)
 
