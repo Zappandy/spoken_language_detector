@@ -5,6 +5,8 @@ __pycache__/
 
 # ignoring dirs
 /talkative_snake
+/Dataset/train
+/Dataset/test
 
 # Distribution / packaging
 .Python
@@ -49,3 +51,6 @@ ipython_config.py
 
 # wav files
 *.wav
+
+# zip files
+*.zip

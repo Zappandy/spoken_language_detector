@@ -4,28 +4,17 @@ import torchaudio.transforms as T
 import numpy as np
 import fnmatch
 import matplotlib.pyplot as plt
-import soundfile as sf  # maybe unneeded if all loading performed with librosa!
+import soundfile as sf
 import librosa
 import librosa.display
 import os
 from torch.utils.data import DataLoader, Dataset, random_split, Subset
 
-
-# used to clean up es files
-# ls /media/andres/2D2DA2454B8413B5/test/test/ | grep -o '.....$' | uniq   # exploring file types
-#/media/andres/2D2DA2454B8413B5/test/test/ | grep -o '^es.*'
-# https://gist.github.com/mthrok/01f89d9bc27a7fe618bf5e8ef71b44ba
-# librosa vs torchaudio spectograms
-# worth using sox to check sampling rate https://stackoverflow.com/questions/4497419/how-do-i-get-an-audio-file-sample-rate-using-sox
-base_path = "/media/andres/2D2DA2454B8413B5/"
-train_dir = base_path + "train/train/"
-test_dir = base_path + "test/test/"
-
 class SpeechDataset(Dataset):
 
     def __init__(self, flac_dir, load_method):
         self.audio_path_list = sorted(self.find_files(flac_dir))  # do we need them to be sorted?
-        methods = {"librosa": self.flac2melspec, "soundfile": self.sf_loader, "torchaudio": self.flac_to_spectro}
+        methods = {"librosa": self.librosa_flac2melspec, "soundfile": self.sf_loader, "torchaudio": self.torch_flac2melspec}
         self.chosen_method = methods[load_method]
         
         
@@ -44,7 +33,7 @@ class SpeechDataset(Dataset):
 
         return  [f.path for f in os.scandir(test_dir) if f.path.endswith(pattern)]  # ends with does not like regex
 
-    def flac_to_spectro(self, file_path):
+    def torch_flac2melspec(self, file_path):
         waveform, sample_rate = torchaudio.load(file_path, normalize=True)
         transform = T.MelSpectrogram(sample_rate)        
         return transform(waveform), sample_rate
@@ -54,7 +43,7 @@ class SpeechDataset(Dataset):
             data, samplerate = sf.read(f)
         return data, samplerate
 
-    def flac2melspec(self, file_path, n_mels=64, melspec_size=512):
+    def librosa_flac2melspec(self, file_path, n_mels=64, melspec_size=512):
         """
         the librosa method we are using atm
         """
@@ -86,13 +75,11 @@ class SpeechDataset(Dataset):
         this method works with librosa
 
         """
-        #TODO: check melspec?
         if melspec.shape[1] < 64:  # n_mels
             shape = np.shape(melspec)
             padded_array = np.zeros((shape[0], 64)) - 1
-            paddeed_array[0:shape[0], :shape[1]] = melspec
+            padded_array[0:shape[0], :shape[1]] = melspec
             melspec = padded_array
-        # should we save it? check speech gan assignment script
         return melspec
 
     def plotmelspec(self, melspec, fs, hop_length, show=False):
@@ -107,23 +94,3 @@ class SpeechDataset(Dataset):
         plt.tight_layout()
         if show:
             plt.show()
-
-# example, tst data has 540 files
-
-test_data = SpeechDataset(test_dir, "librosa")
-test_dataloader = DataLoader(test_data, batch_size=4, shuffle=True)
-train_data = SpeechDataset(train_dir, "librosa")
-train_dataloader = DataLoader(train_data, batch_size=4, shuffle=True)
-
-
-#TODO  finish up the splits
-train_data = Subset(train_data, torch.arange(240)) # 80% 
-test_data = Subset(test_data, torch.arange(60))  # 20%
-
-train_dataloader = DataLoader(train_data, batch_size=16, shuffle=True)
-test_dataloader = DataLoader(test_data, batch_size=16, shuffle=True)
-
-# test visualizations
-
-melspec_test = next(iter(test_dataloader))
-print(melspec_test)
