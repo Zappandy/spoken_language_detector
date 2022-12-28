@@ -1,3 +1,4 @@
+import re
 import torchaudio
 import torchaudio.transforms as T
 import numpy as np
@@ -13,6 +14,8 @@ class SpeechDataset(Dataset):
     def __init__(self, flac_dir, load_method):
         self.audio_path_list = sorted(self.find_files(flac_dir))  # do we need them to be sorted?
         methods = {"librosa": self.librosa_flac2melspec, "soundfile": self.sf_loader, "torchaudio": self.torch_flac2melspec}
+        self.labels = {"es": 0, "en": 1, "de": 2}
+        self.languages = {v: k for k, v in self.labels.items()}
         self.chosen_method = methods[load_method]
         
         
@@ -21,7 +24,9 @@ class SpeechDataset(Dataset):
 
     def __getitem__(self, index):
         audio_file = self.audio_path_list[index]  
-        return self.chosen_method(audio_file)
+        label = self.labels[self.get_label(audio_file)]
+        spectro, _ = self.chosen_method(audio_file)  # _ is fs
+        return spectro, label
 
     def find_files(self, directory, pattern=".flac"):
         """
@@ -29,7 +34,13 @@ class SpeechDataset(Dataset):
         for OG method
         """
 
-        return  [f.path for f in os.scandir(test_dir) if f.path.endswith(pattern)]  # ends with does not like regex
+        return  [f.path for f in os.scandir(directory) if f.path.endswith(pattern)]  # ends with does not like regex
+    
+    def get_label(self, path):
+        labelRegex = re.compile(r"(es|en|de)_.*.flac")
+        patterns = labelRegex.findall(path)
+        assert len(patterns) == 1
+        return patterns[0]
 
     def torch_flac2melspec(self, file_path):
         waveform, sample_rate = torchaudio.load(file_path, normalize=True)
