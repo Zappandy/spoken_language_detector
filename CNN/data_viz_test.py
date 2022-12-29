@@ -47,7 +47,19 @@ cnn_layer2 = nn.Sequential(nn.Conv2d(num_channels1, num_channels2, kernel_size=k
                            nn.MaxPool2d(kernel_pool))
 fc_layer = nn.Linear(num_channels2*15*214, num_classes)  # shape of cnn_layer 2 after convolution of image!
 
-raise SystemExit
+#data_bit = iter(train_dataloader)
+#mel, lab = next(data_bit)
+#print(mel.shape)
+#print(lab.shape)
+#new_mel = mel.unsqueeze(1)
+#x = cnn_layer1(new_mel)
+#y = cnn_layer2(x)
+#z = y.reshape(y.shape[0], -1)
+#w = fc_layer(z)
+#print(w.shape)
+#nn.CrossEntropyLoss(w, lab)
+#
+#raise SystemExit
 
 CNN_model = CNNSpeechClassifier(channel_inputs=1, num_channels1=16,
                                 num_channels2=32, kernel_size=2,

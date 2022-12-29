@@ -42,23 +42,23 @@ class MyTrainer:
                 #print(spectra.shape)  # RuntimeError: Given groups=1, weight of size [16, 1, 2, 2], expected input[1, 8, 64, 862] to have 1 channels, but got 8 channels instead
 
                 spectra = spectra.unsqueeze(1)
-                #labels = labels.unsqueeze(1)
+                #labels = labels.unsqueeze(0)
+                #print(labels.shape)
 
-                preds = self.model(spectra)
+                preds = self.model(spectra)  # 8, 3
                 loss = self.loss_fn(preds, labels)
                 loss.backward()
                 self.optimizer.step()
 
                 loss_curr_epoch += loss.item()
 
-            print("TITO WAS HERE")
             train_loss = loss_curr_epoch / len(train_data)
             self.total_train_loss.append(train_loss)
             acc, val_loss = evaluation(self.model, val_data, self.loss_fn)
             self.total_val_loss.append(val_loss)
             if verbose:
-                print("WAHT IS HAPPENING?")
                 self.pretty_print(epoch=epoch, train_loss=train_loss, val_loss=val_loss, acc=acc)
+                raise SystemExit
             if acc > self.best_acc:
                 #TODO: Save model
                 #torch.save
