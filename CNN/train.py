@@ -41,13 +41,8 @@ class MyTrainer:
             loss_curr_epoch = 0
             for spectra, labels in train_data:
                 self.optimizer.zero_grad()
-                # rows=8, cols=64, channels=862?
-                #print(spectra.shape)  # RuntimeError: Given groups=1, weight of size [16, 1, 2, 2], expected input[1, 8, 64, 862] to have 1 channels, but got 8 channels instead
 
                 spectra = spectra.unsqueeze(1)
-                #labels = labels.unsqueeze(0)
-                #print(labels.shape)
-
                 preds = self.model(spectra)  # 8, 3
                 loss = self.loss_fn(preds, labels)
                 loss.backward()
