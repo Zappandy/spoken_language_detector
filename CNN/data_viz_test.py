@@ -55,26 +55,6 @@ CNN_model = CNNSpeechClassifier(channel_inputs=1, num_channels1=16,
                                 num_channels2=32, kernel_size=2,
                                 kernel_pool=2, padding=0, num_classes=3)
 
-#optimizer = Adam(CNN_model.parameters(), lr=1e-6)
-#data_bit = iter(train_dataloader)
-#mel, lab = next(data_bit)
-#print(mel.shape)
-#new_mel = mel.unsqueeze(1)
-#print(mel.shape)
-#x = cnn_layer1(new_mel)
-#print(x.shape)
-#y = cnn_layer2(x)
-#print(y.shape)
-#z = y.reshape(y.shape[0], -1)
-#w = fc_layer(z)
-#print(w.shape)
-#print(lab.shape)
-#c_loss = nn.CrossEntropyLoss()
-#loss = c_loss(w, lab)
-#loss.backward()
-#optimizer.step()
-#print(f"{loss:.2f}")
-#raise SystemExit
 
 trainer = MyTrainer(CNN_model)
 trainer.train_loop(train_dataloader, val_dataloader)

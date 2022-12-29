@@ -10,13 +10,13 @@ def evaluation(model, val_data, loss_fn):
     model.eval()
     with torch.no_grad():
         correct = 0
+        loss = 0
         total = 0
         for spectra, labels in val_data:
 
             spectra = spectra.unsqueeze(1)
             preds = model(spectra)
             vals, labels_preds = torch.max(preds.data, 1)  # preds.data == preds? vals are not needed
-            print('-'*8)
             total += labels.size(0)  # same as shape[0], what's more pytorch-like?
             correct += (labels_preds == labels).sum().item()
             # loss
@@ -62,9 +62,13 @@ class MyTrainer:
             if verbose:
                 self.pretty_print(epoch=epoch, train_loss=train_loss, val_loss=val_loss, acc=acc)
             if acc > self.best_acc:
-                #TODO: Save model
-                #torch.save
+                #TODO: review saving
+                #best_model = copy.deepcopy(self.model)
+                #torch.save(self.model.state_dict(), 'model_best.pt')
+                self.best_acc = acc
                 continue
+
+
         
         if visual:
             self.visualize(epochs)
