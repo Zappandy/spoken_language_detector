@@ -1,4 +1,5 @@
 import re
+import torch
 import torchaudio
 import torchaudio.transforms as T
 import numpy as np
@@ -26,6 +27,8 @@ class SpeechDataset(Dataset):
         audio_file = self.audio_path_list[index]  
         label = self.labels[self.get_label(audio_file)]
         spectro, _ = self.chosen_method(audio_file)  # _ is fs
+        #spectro = torch.from_numpy(spectro)
+        #spectro = spectro.unsqueeze(0)
         return spectro, label
 
     def find_files(self, directory, pattern=".flac"):
@@ -52,7 +55,7 @@ class SpeechDataset(Dataset):
             data, samplerate = sf.read(f)
         return data, samplerate
 
-    def librosa_flac2melspec(self, file_path, n_mels=64, melspec_size=512):
+    def librosa_flac2melspec(self, file_path, n_mels=64, melspec_size=512, visual=False):
         """
         the librosa method we are using atm
         """
@@ -72,21 +75,22 @@ class SpeechDataset(Dataset):
                                                  hop_length=hop_length, n_mels=n_mels)
 
 
-        self.plotmelspec(melspec, fs, hop_length)
+        if visual:
+            self.plotmelspec(melspec, fs, hop_length)
 
         melspec = librosa.power_to_db(melspec, ref=1.0)
         melspec /= 80.0  # highest db...
         melspec = self.checkmelspec(melspec)
         return melspec, fs
 
-    def checkmelspec(self, melspec):
+    def checkmelspec(self, melspec, n_mels=64):
         """
         this method works with librosa
 
         """
-        if melspec.shape[1] < 64:  # n_mels
+        if melspec.shape[1] < n_mels:  # n_mels
             shape = np.shape(melspec)
-            padded_array = np.zeros((shape[0], 64)) - 1
+            padded_array = np.zeros((shape[0], n_mels)) - 1
             padded_array[0:shape[0], :shape[1]] = melspec
             melspec = padded_array
         return melspec
@@ -103,3 +107,4 @@ class SpeechDataset(Dataset):
         plt.tight_layout()
         if show:
             plt.show()
+        plt.close()  # to close windows and fix warning!
