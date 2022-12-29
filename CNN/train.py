@@ -15,8 +15,9 @@ def evaluation(model, val_data, loss_fn):
 
             spectra = spectra.unsqueeze(1)
             preds = model(spectra)
-            labels_preds = torch.max(preds.data, 1)
-            total += labels.size(0)
+            vals, labels_preds = torch.max(preds.data, 1)  # preds.data == preds? vals are not needed
+            print('-'*8)
+            total += labels.size(0)  # same as shape[0], what's more pytorch-like?
             correct += (labels_preds == labels).sum().item()
             # loss
             err = loss_fn(preds, labels)
