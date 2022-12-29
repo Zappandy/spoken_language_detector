@@ -12,6 +12,8 @@ def evaluation(model, val_data, loss_fn):
         correct = 0
         total = 0
         for spectra, labels in val_data:
+
+            spectra = spectra.unsqueeze(1)
             preds = model(spectra)
             labels_preds = torch.max(preds.data, 1)
             total += labels.size(0)
@@ -58,7 +60,6 @@ class MyTrainer:
             self.total_val_loss.append(val_loss)
             if verbose:
                 self.pretty_print(epoch=epoch, train_loss=train_loss, val_loss=val_loss, acc=acc)
-                raise SystemExit
             if acc > self.best_acc:
                 #TODO: Save model
                 #torch.save
