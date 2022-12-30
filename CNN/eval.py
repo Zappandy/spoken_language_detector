@@ -1,4 +1,4 @@
-from train import evaluation
+from utils import evaluation
 import torch.nn as nn
 
 

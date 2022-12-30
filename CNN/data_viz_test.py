@@ -14,7 +14,7 @@ train_dir = "../Dataset/train/train"
 train_data = SpeechDataset(train_dir, "librosa")
 
 # FOR TEST PURPOSES REMOVE AFTER
-train_data = Subset(train_data, torch.arange(5000))
+train_data = Subset(train_data, torch.arange(100))
 
 test_data = SpeechDataset(test_dir, "librosa")
 train_size = int(len(train_data) * 0.8)
