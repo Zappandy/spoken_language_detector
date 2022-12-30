@@ -8,7 +8,6 @@ from torch.utils.data import DataLoader, Subset, random_split
 #torch.manual_seed(0)
 SEED = 42
 
-test_dir = "../Dataset/test/test"
 train_dir = "../Dataset/train/train"
 
 train_data = SpeechDataset(train_dir, "librosa")
@@ -16,7 +15,6 @@ train_data = SpeechDataset(train_dir, "librosa")
 # FOR TEST PURPOSES REMOVE AFTER
 train_data = Subset(train_data, torch.arange(100))
 
-test_data = SpeechDataset(test_dir, "librosa")
 train_size = int(len(train_data) * 0.8)
 val_size = len(train_data) - train_size
 
@@ -25,12 +23,9 @@ train_data, val_data = random_split(train_data, [train_size, val_size], generato
 train_dataloader = DataLoader(train_data, batch_size=8, shuffle=True)  # 8, 64, 862 - 8
 val_dataloader = DataLoader(val_data, batch_size=8, shuffle=True)  # 8, 64, 862 - 8
 # not an issue with 4 batch, but others end up with 2 sizes.
-test_dataloader = DataLoader(test_data, batch_size=8, shuffle=True)  # one is 4, 64, 862 - 4 despite batch size
 #[1, 2, 3, 4, 5, 6, 9, 10, 12, 15, 18, 20, 27, 30, 36, 45, 54, 60]
 
 print("TRAINING TIME")
-
-
 
 CNN_model = CNNSpeechClassifier(channel_inputs=1, num_channels1=16,
                                 num_channels2=32, kernel_size=2,
