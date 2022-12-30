@@ -1,9 +1,13 @@
 # https://debuggercafe.com/saving-and-loading-the-best-model-in-pytorch/
 import torch
 import matplotlib.pyplot as plt
+from torch import cuda
 
 
 def evaluation(model, val_data, loss_fn):
+
+    device = 'cuda' if cuda.is_available() else 'cpu'
+
     model.eval()
     with torch.no_grad():
         correct = 0
@@ -12,6 +16,8 @@ def evaluation(model, val_data, loss_fn):
         for spectra, labels in val_data:
 
             spectra = spectra.unsqueeze(1)
+            spectra = spectra.to(device)
+            labels = labels.to(device)
             preds = model(spectra)
             vals, labels_preds = torch.max(preds.data, 1)  # preds.data == preds? vals are not needed
             total += labels.size(0)  # same as shape[0], what's more pytorch-like?

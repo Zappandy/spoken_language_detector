@@ -2,7 +2,8 @@ from utils import evaluation
 from model import CNNSpeechClassifier
 #import torch.nn as nn
 import torch
-from torch.optim import Adam
+from torch import cuda
+from torch.optim import AdamW
 from dataloader import SpeechDataset
 from torch.utils.data import DataLoader
 
@@ -10,6 +11,7 @@ from torch.utils.data import DataLoader
 def load_components(checkpoint):
 
 
+    device = 'cuda' if cuda.is_available() else 'cpu'
     epoch = checkpoint["epoch"]
     loss_fn = checkpoint["loss"]
     #loss_fn = nn.CrossEntropyLoss()
@@ -21,8 +23,10 @@ def load_components(checkpoint):
 
     model.load_state_dict(checkpoint["model_state_dict"])
 
-    optimizer = Adam(model.parameters())
+    optimizer = AdamW(model.parameters())
     optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
+    
+    model.to(device)
 
     return model, optimizer, epoch, loss_fn
 
@@ -39,7 +43,7 @@ def main():
 
     acc, test_loss = evaluation(model, test_dataloader, loss_fn)
 
-    print(f"Epoch {epoch+1}: test loss is {test_loss:.3f} | Accuracy is {acc:.2f}%")
+    print(f"Epoch {epoch}: test loss is {test_loss:.3f} | Accuracy is {acc:.2f}%")
 
 if __name__ == "__main__":
     main()

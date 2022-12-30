@@ -1,21 +1,26 @@
 import copy
 import torch.nn as nn
 from tqdm import tqdm
-from torch.optim import Adam
+from torch.optim import AdamW
+from torch import cuda
 from utils import evaluation, visualize, SaveBestModel, save_model
 
 
 class MyTrainer:
 
     def __init__(self, model, lr=1e-6):
+
+        self.device = 'cuda' if cuda.is_available() else 'cpu'
+
         self.total_train_loss = []
         self.total_val_loss = []
         self.loss_fn = nn.CrossEntropyLoss()
         self.model = copy.deepcopy(model)
+        self.model.to(self.device)
         self.model.train()
-        self.optimizer = Adam(self.model.parameters(), lr=lr)
+        self.optimizer = AdamW(self.model.parameters(), lr=lr)
 
-    def train_loop(self, train_data, val_data, epochs=30, verbose=True, visual=False):
+    def train_loop(self, train_data, val_data, epochs=10, verbose=True, visual=False):
 
         save_best_model = SaveBestModel()
 
@@ -25,6 +30,10 @@ class MyTrainer:
                 self.optimizer.zero_grad()
 
                 spectra = spectra.unsqueeze(1)
+
+                spectra = spectra.to(self.device)
+                labels = labels.to(self.device)
+
                 preds = self.model(spectra)  # 8, 3
                 loss = self.loss_fn(preds, labels)
                 loss.backward()
