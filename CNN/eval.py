@@ -21,7 +21,7 @@ def load_components(checkpoint):
 
     model.load_state_dict(checkpoint["model_state_dict"])
 
-    optimizer = Adam(model.parameters(), lr=lr)
+    optimizer = Adam(model.parameters())
     optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
 
     return model, optimizer, epoch, loss_fn
@@ -35,10 +35,11 @@ def main():
 
     best_checkpoint = torch.load("model_output/best_speech_cnn.pth")
     final_checkpoint = torch.load("model_output/final_speech_cnn.pth")
-    model, _, _, loss_fn = load_components(best_checkpoint)
+    model, optimizer, epoch, loss_fn = load_components(best_checkpoint)
 
-    acc, val_loss = evaluation(model, test_dataloader, loss_fn)
-    pass
+    acc, test_loss = evaluation(model, test_dataloader, loss_fn)
+
+    print(f"Epoch {epoch+1}: test loss is {test_loss:.3f} | Accuracy is {acc:.2f}%")
 
 if __name__ == "__main__":
     main()
