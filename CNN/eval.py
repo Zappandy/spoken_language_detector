@@ -8,10 +8,11 @@ from dataloader import SpeechDataset
 from torch.utils.data import DataLoader
 
 
+device = 'cuda' if cuda.is_available() else 'cpu'
+
 def load_components(checkpoint):
 
 
-    device = 'cuda' if cuda.is_available() else 'cpu'
     epoch = checkpoint["epoch"]
     loss_fn = checkpoint["loss"]
     #loss_fn = nn.CrossEntropyLoss()
@@ -37,8 +38,8 @@ def main():
     test_data = SpeechDataset(test_dir, "librosa")
     test_dataloader = DataLoader(test_data, batch_size=8, shuffle=True)  # one is 4, 64, 862 - 4 despite batch size
 
-    best_checkpoint = torch.load("model_output/best_speech_cnn.pth")
-    final_checkpoint = torch.load("model_output/final_speech_cnn.pth")
+    best_checkpoint = torch.load("model_output/best_speech_cnn.pth", map_location=device)
+    final_checkpoint = torch.load("model_output/final_speech_cnn.pth", map_location=device)
     model, optimizer, epoch, loss_fn = load_components(best_checkpoint)
 
     acc, test_loss = evaluation(model, test_dataloader, loss_fn)
