@@ -7,23 +7,24 @@ from dataloader import SpeechDataset
 from torch.utils.data import DataLoader
 
 
-def load_components(checkpoint, test_dataloader):
+def load_components(checkpoint):
 
 
     epoch = checkpoint["epoch"]
     loss_fn = checkpoint["loss"]
     #loss_fn = nn.CrossEntropyLoss()
 
-    CNN_model = CNNSpeechClassifier(channel_inputs=1, num_channels1=16,
-                                    num_channels2=32, kernel_size=2,
-                                    kernel_pool=2, padding=0, num_classes=3)
+    model = CNNSpeechClassifier(channel_inputs=1, num_channels1=16,
+                                num_channels2=32, kernel_size=2,
+                                kernel_pool=2, padding=0, num_classes=3)
 
 
-    CNN_model.load_state_dict(checkpoint["model_state_dict"])
+    model.load_state_dict(checkpoint["model_state_dict"])
 
-    optimizer = Adam(CNN_model.parameters(), lr=lr)
+    optimizer = Adam(model.parameters(), lr=lr)
     optimizer.load_state_dict(checkpoint["optimizer_state_dict"])
-    acc, val_loss = evaluation(CNN_model, test_dataloader, loss_fn)
+
+    return model, optimizer, epoch, loss_fn
 
 def main():
 
@@ -34,7 +35,9 @@ def main():
 
     best_checkpoint = torch.load("model_output/best_speech_cnn.pth")
     final_checkpoint = torch.load("model_output/final_speech_cnn.pth")
-    load_components(best_checkpoint, test_dataloader)
+    model, _, _, loss_fn = load_components(best_checkpoint)
+
+    acc, val_loss = evaluation(model, test_dataloader, loss_fn)
     pass
 
 if __name__ == "__main__":
