@@ -1,19 +1,21 @@
 # example, tst data has 540 files
 import torch
-from dataloader import SpeechDataset
+from dataloader import SpeechDataset, get_balanced_subset
 from model import CNNSpeechClassifier
 from train import MyTrainer
 from torch.utils.data import DataLoader, Subset, random_split
 
 #torch.manual_seed(0)
 SEED = 42
-
 train_dir = "../Dataset/train/train"
 
 train_data = SpeechDataset(train_dir, "librosa")
 
 # FOR TEST PURPOSES REMOVE AFTER
-train_data = Subset(train_data, torch.arange(100))
+#train_data = Subset(train_data, torch.arange(100))
+
+train_data = get_balanced_subset(train_data, 4000) #4000 files for each language
+
 
 train_size = int(len(train_data) * 0.8)
 val_size = len(train_data) - train_size

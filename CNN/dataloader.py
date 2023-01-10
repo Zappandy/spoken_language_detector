@@ -9,6 +9,7 @@ import librosa
 import librosa.display
 import os
 from torch.utils.data import Dataset
+from copy import deepcopy
 
 class SpeechDataset(Dataset):
 
@@ -38,6 +39,15 @@ class SpeechDataset(Dataset):
         """
 
         return  [f.path for f in os.scandir(directory) if f.path.endswith(pattern)]  # ends with does not like regex
+    
+    def monolingual_path_list(self,language):
+        """
+        Input: string ('en'|'de'|'es')
+        Output: audio path list only containing file names of the chosen language
+        """
+        r = re.compile(rf'.*\/{language}_.*\.flac') 
+        newlist = list(filter(r.match, self.audio_path_list))
+        return newlist
     
     def get_label(self, path):
         labelRegex = re.compile(r"(es|en|de)_.*.flac")
@@ -108,3 +118,29 @@ class SpeechDataset(Dataset):
         if show:
             plt.show()
         plt.close()  # to close windows and fix warning!
+
+
+
+def get_balanced_subset(train_data,n):
+    '''
+    Creates subset with equal amounts of data from each language
+    Input: instance of class Speechdataset, desired number of files per language (int) 
+    Output: balanced subset (torch.utils.data.dataset.ConcatDataset)
+    '''
+    #create new instances for each language
+    en=deepcopy(train_data)
+    es=deepcopy(train_data)
+    de=deepcopy(train_data)
+    
+    #modify the audio_path_list to only include paths to files of a single language
+    en.audio_path_list=en.monolingual_path_list('en')
+    es.audio_path_list=es.monolingual_path_list('es')
+    de.audio_path_list=de.monolingual_path_list('de')
+    
+    #extract equally sized subsets from each monolingual dataset
+    en_sub = Subset(en, torch.arange(n))
+    es_sub = Subset(es, torch.arange(n))
+    de_sub = Subset(de, torch.arange(n))
+    
+    subset=en_sub+de_sub+es_sub #concatenate subsets
+    return subset
