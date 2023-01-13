@@ -1,3 +1,6 @@
+# custom dirs
+cnn_sources/
+speech_sources/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
