@@ -1,6 +1,7 @@
 import re
 import torch
 import torchaudio
+from torch.utils.data import Subset
 import torchaudio.transforms as T
 import numpy as np
 import matplotlib.pyplot as plt
@@ -121,7 +122,7 @@ class SpeechDataset(Dataset):
 
 
 
-def get_balanced_subset(train_data,n):
+def get_balanced_subset(train_data, n):
     '''
     Creates subset with equal amounts of data from each language
     Input: instance of class Speechdataset, desired number of files per language (int) 
