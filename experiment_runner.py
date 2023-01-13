@@ -7,12 +7,12 @@ from torch.utils.data import DataLoader, Subset, random_split
 
 #torch.manual_seed(0)
 SEED = 42
-train_dir = "../Dataset/train/train"
+train_dir = "./Dataset/train/train"
 
 train_data = SpeechDataset(train_dir, "librosa")
 
 
-train_data = get_balanced_subset(train_data, 4000) #4000 files for each language
+train_data = get_balanced_subset(train_data, 400) #4000 files for each language
 
 
 
