@@ -1,5 +1,6 @@
 from utils import evaluation
 from model import CNNSpeechClassifier
+from dataloader import get_balanced_subset
 #import torch.nn as nn
 import torch
 from torch import cuda
@@ -36,6 +37,7 @@ def main():
     test_dir = "../Dataset/test/test"
 
     test_data = SpeechDataset(test_dir, "librosa")
+    #test_data = get_balanced_subset(test_data, 80, 'f') #TODO: redefine logic to only create subsets based on gender?
     test_dataloader = DataLoader(test_data, batch_size=8, shuffle=True)  # one is 4, 64, 862 - 4 despite batch size
 
     best_checkpoint = torch.load("model_output/best_speech_cnn.pth", map_location=device)
@@ -44,7 +46,7 @@ def main():
 
     acc, test_loss = evaluation(model, test_dataloader, loss_fn)
 
-    print(f"Epoch {epoch}: test loss is {test_loss:.3f} | Accuracy is {acc:.2f}%")
+    print(f"Best epoch {epoch}: test loss is {test_loss:.3f} | Accuracy is {acc:.2f}%")
 
 if __name__ == "__main__":
     main()

@@ -1,6 +1,6 @@
 import re
 import torch
-import torchaudio
+#import torchaudio
 from torch.utils.data import Subset
 import torchaudio.transforms as T
 import numpy as np
@@ -41,12 +41,12 @@ class SpeechDataset(Dataset):
 
         return  [f.path for f in os.scandir(directory) if f.path.endswith(pattern)]  # ends with does not like regex
     
-    def monolingual_path_list(self,language):
+    def monolingual_path_list(self, language, gender):
         """
         Input: string ('en'|'de'|'es')
         Output: audio path list only containing file names of the chosen language
         """
-        r = re.compile(rf'.*\/{language}_.*\.flac') 
+        r = re.compile(rf'.*\/{language}_{gender}.*\.flac') 
         newlist = list(filter(r.match, self.audio_path_list))
         return newlist
     
@@ -57,9 +57,10 @@ class SpeechDataset(Dataset):
         return patterns[0]
 
     def torch_flac2melspec(self, file_path):
-        waveform, sample_rate = torchaudio.load(file_path, normalize=True)
-        transform = T.MelSpectrogram(sample_rate)        
-        return transform(waveform), sample_rate
+        pass  # commenting option to avoid pip issues on colab
+        #waveform, sample_rate = torchaudio.load(file_path, normalize=True)
+        #transform = T.MelSpectrogram(sample_rate)        
+        #return transform(waveform), sample_rate
         
     def sf_loader(self, file_path):
         with open(file_path, "rb") as f:
@@ -122,7 +123,7 @@ class SpeechDataset(Dataset):
 
 
 
-def get_balanced_subset(train_data, n):
+def get_balanced_subset(train_data, n, gender):
     '''
     Creates subset with equal amounts of data from each language
     Input: instance of class Speechdataset, desired number of files per language (int) 
@@ -134,9 +135,9 @@ def get_balanced_subset(train_data, n):
     de=deepcopy(train_data)
     
     #modify the audio_path_list to only include paths to files of a single language
-    en.audio_path_list=en.monolingual_path_list('en')
-    es.audio_path_list=es.monolingual_path_list('es')
-    de.audio_path_list=de.monolingual_path_list('de')
+    en.audio_path_list=en.monolingual_path_list('en', gender)
+    es.audio_path_list=es.monolingual_path_list('es', gender)
+    de.audio_path_list=de.monolingual_path_list('de', gender)
     
     #extract equally sized subsets from each monolingual dataset
     en_sub = Subset(en, torch.arange(n))

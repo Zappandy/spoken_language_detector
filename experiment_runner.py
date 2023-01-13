@@ -12,7 +12,7 @@ train_dir = "./Dataset/train/train"
 train_data = SpeechDataset(train_dir, "librosa")
 
 
-train_data = get_balanced_subset(train_data, 400) #4000 files for each language
+train_data = get_balanced_subset(train_data, 1000, 'f') #4000 files for each language
 
 
 
