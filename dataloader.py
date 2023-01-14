@@ -39,14 +39,17 @@ class SpeechDataset(Dataset):
         for OG method
         """
 
-        return  [f.path for f in os.scandir(directory) if f.path.endswith(pattern)]  # ends with does not like regex
+        regexFlac = re.compile(rf'/.*fragment\d+\{pattern}$') 
+        files = [f.path for f in os.scandir(directory) if regexFlac.search(f.path)]  # ends with does not like regex
+        return files
     
     def monolingual_path_list(self, language, gender):
         """
         Input: string ('en'|'de'|'es')
         Output: audio path list only containing file names of the chosen language
         """
-        r = re.compile(rf'.*\/{language}_{gender}.*\.flac') 
+        #r = re.compile(rf'.*\/{language}_{gender}.*fragment\d+\.flac') 
+        r = re.compile(rf'.*\/{language}.*fragment\d+\.flac') 
         newlist = list(filter(r.match, self.audio_path_list))
         return newlist
     
@@ -134,11 +137,12 @@ def get_balanced_subset(train_data, n, gender):
     es=deepcopy(train_data)
     de=deepcopy(train_data)
     
+    
     #modify the audio_path_list to only include paths to files of a single language
     en.audio_path_list=en.monolingual_path_list('en', gender)
     es.audio_path_list=es.monolingual_path_list('es', gender)
     de.audio_path_list=de.monolingual_path_list('de', gender)
-    
+
     #extract equally sized subsets from each monolingual dataset
     en_sub = Subset(en, torch.arange(n))
     es_sub = Subset(es, torch.arange(n))

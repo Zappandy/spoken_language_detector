@@ -18,6 +18,7 @@ class MyTrainer:
         self.model = copy.deepcopy(model)
         self.model.to(self.device)
         self.model.train()
+        lr = 1e-4  # 1e-4 best so far?
         self.optimizer = AdamW(self.model.parameters(), lr=lr)
 
     def train_loop(self, train_data, val_data, epochs=10, verbose=True, visual=False):

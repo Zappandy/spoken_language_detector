@@ -40,7 +40,7 @@ def main():
     test_data = get_balanced_subset(test_data, 80, 'f') #TODO: redefine logic to only create subsets based on gender?
     test_dataloader = DataLoader(test_data, batch_size=8, shuffle=True)  # one is 4, 64, 862 - 4 despite batch size
 
-    best_checkpoint = torch.load("model_output/best_speech_cnn.pth", map_location=device)
+    best_checkpoint = torch.load("model_output/best_speech_cnn.pth", map_location=device)  # weird form of early stopping. Should add patience
     final_checkpoint = torch.load("model_output/final_speech_cnn.pth", map_location=device)
     model, optimizer, epoch, loss_fn = load_components(best_checkpoint)
 

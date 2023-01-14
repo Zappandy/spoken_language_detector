@@ -12,8 +12,8 @@ train_dir = "./Dataset/train/train"
 train_data = SpeechDataset(train_dir, "librosa")
 
 
-train_data = get_balanced_subset(train_data, 100, 'f') #4000 files for each language
 
+#train_data = get_balanced_subset(train_data, 1000, 'f') #4000 files for each language
 
 
 train_size = int(len(train_data) * 0.8)
@@ -23,6 +23,7 @@ val_size = len(train_data) - train_size
 train_data, val_data = random_split(train_data, [train_size, val_size], generator=torch.Generator().manual_seed(SEED))
 train_dataloader = DataLoader(train_data, batch_size=8, shuffle=True)  # 8, 64, 862 - 8
 val_dataloader = DataLoader(val_data, batch_size=8, shuffle=True)  # 8, 64, 862 - 8
+
 
 print("TRAINING TIME")
 
