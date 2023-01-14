@@ -34,10 +34,10 @@ def load_components(checkpoint):
 
 def main():
 
-    test_dir = "../Dataset/test/test"
+    test_dir = "Dataset/test/test"
 
     test_data = SpeechDataset(test_dir, "librosa")
-    #test_data = get_balanced_subset(test_data, 80, 'f') #TODO: redefine logic to only create subsets based on gender?
+    test_data = get_balanced_subset(test_data, 80, 'f') #TODO: redefine logic to only create subsets based on gender?
     test_dataloader = DataLoader(test_data, batch_size=8, shuffle=True)  # one is 4, 64, 862 - 4 despite batch size
 
     best_checkpoint = torch.load("model_output/best_speech_cnn.pth", map_location=device)
