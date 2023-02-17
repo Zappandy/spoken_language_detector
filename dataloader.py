@@ -1,8 +1,6 @@
 import re
 import torch
-#import torchaudio
 from torch.utils.data import Subset
-#import torchaudio.transforms as T
 import numpy as np
 import matplotlib.pyplot as plt
 import soundfile as sf
@@ -28,9 +26,7 @@ class SpeechDataset(Dataset):
     def __getitem__(self, index):
         audio_file = self.audio_path_list[index]  
         label = self.labels[self.get_label(audio_file)]
-        spectro, _ = self.chosen_method(audio_file)  # _ is fs
-        #spectro = torch.from_numpy(spectro)
-        #spectro = spectro.unsqueeze(0)
+        spectro, _ = self.chosen_method(audio_file)  
         return spectro, label
 
     def find_files(self, directory, pattern=".flac"):
@@ -48,7 +44,6 @@ class SpeechDataset(Dataset):
         Input: string ('en'|'de'|'es')
         Output: audio path list only containing file names of the chosen language
         """
-        #r = re.compile(rf'.*\/{language}_{gender}.*fragment\d+\.flac') 
         r = re.compile(rf'.*\/{language}.*fragment\d+\.flac') 
         newlist = list(filter(r.match, self.audio_path_list))
         return newlist
@@ -60,7 +55,8 @@ class SpeechDataset(Dataset):
         return patterns[0]
 
     def torch_flac2melspec(self, file_path):
-        pass  # commenting option to avoid pip issues on colab
+        pass  
+        # tests with MelSpectrograms 
         #waveform, sample_rate = torchaudio.load(file_path, normalize=True)
         #transform = T.MelSpectrogram(sample_rate)        
         #return transform(waveform), sample_rate
@@ -100,10 +96,10 @@ class SpeechDataset(Dataset):
 
     def checkmelspec(self, melspec, n_mels=64):
         """
-        this method works with librosa
+        This method works with librosa
 
         """
-        if melspec.shape[1] < n_mels:  # n_mels
+        if melspec.shape[1] < n_mels: 
             shape = np.shape(melspec)
             padded_array = np.zeros((shape[0], n_mels)) - 1
             padded_array[0:shape[0], :shape[1]] = melspec
