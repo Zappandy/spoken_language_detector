@@ -1,8 +1,5 @@
 import torch.nn as nn
 
-
-# https://discuss.pytorch.org/t/runtimeerror-given-groups-1-weight-64-3-3-3-so-expected-input-16-64-256-256-to-have-3-channels-but-got-64-channels-instead/12765/3
-# https://www.google.com/search?q=RuntimeError%3A+Given+groups%3D1%2C+weight+of+size+%5B16%2C+1%2C+2%2C+2%5D%2C+expected+input%5B1%2C+8%2C+64%2C+862%5D+to+have+1+channels%2C+but+got+8+channels+&source=hp&ei=5aisY9HLEaPh7_UP7eaXaA&iflsig=AJiK0e8AAAAAY6y29Zezs58YNZGiLVUa9aIDcDbq9cY0&ved=0ahUKEwiR0pKhlZ38AhWj8LsIHW3zBQ0Q4dUDCAg&uact=5&oq=RuntimeError%3A+Given+groups%3D1%2C+weight+of+size+%5B16%2C+1%2C+2%2C+2%5D%2C+expected+input%5B1%2C+8%2C+64%2C+862%5D+to+have+1+channels%2C+but+got+8+channels+&gs_lcp=Cgdnd3Mtd2l6EANQAFgAYO8BaABwAHgAgAEAiAEAkgEAmAEAoAECoAEB&sclient=gws-wiz
 class CNNSpeechClassifier(nn.Module):
 
     def __init__(self, channel_inputs, num_channels1, num_channels2, kernel_size, kernel_pool, padding, num_classes):
