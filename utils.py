@@ -1,4 +1,3 @@
-# https://debuggercafe.com/saving-and-loading-the-best-model-in-pytorch/
 import torch
 import matplotlib.pyplot as plt
 from torch import cuda
@@ -19,8 +18,8 @@ def evaluation(model, val_data, loss_fn):
             spectra = spectra.to(device)
             labels = labels.to(device)
             preds = model(spectra)
-            vals, labels_preds = torch.max(preds.data, 1)  # preds.data == preds? vals are not needed
-            total += labels.size(0)  # same as shape[0], what's more pytorch-like?
+            vals, labels_preds = torch.max(preds.data, 1)  
+            total += labels.size(0)  
             correct += (labels_preds == labels).sum().item()
             # loss
             err = loss_fn(preds, labels)
@@ -39,7 +38,6 @@ def visualize(epochs, tr_loss, val_loss, save=False):
     plt.title('Loss over epochs')
     if save:
         fig.savefig("Loss_over_epochs.jpg", bbox_inches="tight", dpi=150)
-    #plt.show()
     plt.close(fig)
 
 def save_model(epochs, model, optimizer, criterion):
