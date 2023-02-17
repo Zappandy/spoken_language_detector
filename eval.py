@@ -1,7 +1,6 @@
 from utils import evaluation
 from model import CNNSpeechClassifier
 from dataloader import get_balanced_subset
-#import torch.nn as nn
 import torch
 from torch import cuda
 from torch.optim import AdamW
@@ -16,7 +15,6 @@ def load_components(checkpoint):
 
     epoch = checkpoint["epoch"]
     loss_fn = checkpoint["loss"]
-    #loss_fn = nn.CrossEntropyLoss()
 
     model = CNNSpeechClassifier(channel_inputs=1, num_channels1=16,
                                 num_channels2=32, kernel_size=2,
@@ -37,8 +35,8 @@ def main():
     test_dir = "Dataset/test/test"
 
     test_data = SpeechDataset(test_dir, "librosa")
-    test_data = get_balanced_subset(test_data, 80, 'f') #TODO: redefine logic to only create subsets based on gender?
-    test_dataloader = DataLoader(test_data, batch_size=8, shuffle=True)  # one is 4, 64, 862 - 4 despite batch size
+    test_data = get_balanced_subset(test_data, 80, 'f') 
+    test_dataloader = DataLoader(test_data, batch_size=8, shuffle=True)
 
     best_checkpoint = torch.load("model_output/best_speech_cnn.pth", map_location=device)  # weird form of early stopping. Should add patience
     final_checkpoint = torch.load("model_output/final_speech_cnn.pth", map_location=device)
