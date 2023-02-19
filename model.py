@@ -11,7 +11,7 @@ class CNNSpeechClassifier(nn.Module):
                                         nn.MaxPool2d(kernel_pool))
 
 
-        self.dropout = nn.Dropout(0.25)
+        self.dropout = nn.Dropout(0.5)  # 0.5 best so far. I've tried .25 as well
         self.fc_layer = nn.Linear(num_channels1*31*430, num_classes)  # shape of cnn_layer 1 after convolution of image!
         #self.cnn_layer2 = nn.Sequential(nn.Conv2d(num_channels1, num_channels2, kernel_size=kernel_size, padding=padding),
         #                                nn.ReLU(),
