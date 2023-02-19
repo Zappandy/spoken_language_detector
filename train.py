@@ -4,6 +4,7 @@ from tqdm import tqdm
 from torch.optim import AdamW
 from torch import cuda
 from utils import evaluation, visualize, SaveBestModel, save_model
+from codecarbon import track_emissions
 
 
 class MyTrainer:
@@ -21,8 +22,10 @@ class MyTrainer:
         lr = 1e-3  # 1e-4 best so far?. 1e-3 
         self.optimizer = AdamW(self.model.parameters(), lr=lr)
 
+    #@track_emissions(project_name="spoken_lang_detector", offline=True, country_iso_code='FRA')
     def train_loop(self, train_data, val_data, epochs=10, verbose=True, visual=False):
 
+        #https://github.com/Bjarten/early-stopping-pytorch/blob/master/MNIST_Early_Stopping_example.ipynb
         save_best_model = SaveBestModel()
 
         for epoch in tqdm(range(epochs)):

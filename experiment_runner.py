@@ -19,10 +19,14 @@ val_dataloader = DataLoader(val_data, batch_size=8, shuffle=True)  # 8, 64, 862 
 
 print("TRAINING TIME")
 
+kernel_size = (7, 7)
+stride = (2, 2)
+padding = (3, 3)
+
 CNN_model = CNNSpeechClassifier(channel_inputs=1, num_channels1=16,
-                                num_channels2=32, kernel_size=2,
-                                kernel_pool=2, padding=0, num_classes=3)
+                                num_channels2=32, kernel_size=kernel_size, stride=stride,
+                                kernel_pool=2, padding=padding, num_classes=3)
 
 
 trainer = MyTrainer(CNN_model)
-trainer.train_loop(train_dataloader, val_dataloader, visual=True)
+trainer.train_loop(train_dataloader, val_dataloader, visual=True, epochs=5)
