@@ -3,7 +3,7 @@ import torch.nn as nn
 from tqdm import tqdm
 from torch.optim import AdamW
 from torch import cuda
-from utils import evaluation, visualize, SaveBestModel, save_model
+from utils import evaluation, visualize, save_model, EarlyStopping, SaveBestModel
 from codecarbon import track_emissions
 
 
@@ -26,8 +26,10 @@ class MyTrainer:
     def train_loop(self, train_data, val_data, conv_type='2D', epochs=10, verbose=True, visual=False):
 
         #https://github.com/Bjarten/early-stopping-pytorch/blob/master/MNIST_Early_Stopping_example.ipynb
-        save_best_model = SaveBestModel()
+        early_stopping = EarlyStopping()
+        save_ckp = SaveBestModel()
 
+        early_stop_value = None
         for epoch in tqdm(range(epochs)):
             loss_curr_epoch = 0
             for spectra, labels in train_data:
@@ -53,12 +55,18 @@ class MyTrainer:
             if verbose:
                 self.pretty_print(epoch=epoch, train_loss=train_loss, val_loss=val_loss, acc=acc)
 
-            save_best_model(val_loss, epoch, self.model, self.optimizer, self.loss_fn)
+            save_ckp(val_loss, epoch, self.model, self.optimizer, self.loss_fn)
+            early_stopping(val_loss)
 
 
+            if early_stopping.early_stop:
+                early_stop_value = epoch+1
+                print(f"Early stopping at epoch {early_stop_value}") 
         
         if visual:
-            visualize(epochs, self.total_train_loss, self.total_val_loss)
+            if not early_stop_value:
+                early_stop_value = None
+            visualize(epochs, self.total_train_loss, self.total_val_loss, early_stop_value)
         save_model(epochs=epochs, model=self.model, optimizer=self.optimizer, criterion=self.loss_fn)
     
     def pretty_print(self, epoch, train_loss, val_loss, acc):

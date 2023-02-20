@@ -32,4 +32,4 @@ CNN_model = CNNSpeechClassifier2D(channel_inputs=1, num_channels1=16,
 
 
 trainer = MyTrainer(CNN_model)
-trainer.train_loop(train_dataloader, val_dataloader, visual=True, epochs=10)
+trainer.train_loop(train_dataloader, val_dataloader, visual=True, epochs=5)
