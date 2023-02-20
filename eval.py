@@ -1,5 +1,5 @@
 from utils import evaluation
-from model import CNNSpeechClassifier
+from model import CNNSpeechClassifier2D
 from dataloader import get_balanced_subset
 import torch
 from torch import cuda
@@ -16,14 +16,17 @@ def load_components(checkpoint):
     epoch = checkpoint["epoch"]
     loss_fn = checkpoint["loss"]
 
-    kernel_size = (7, 7)
+    kernel_size = (3, 3)
     stride = (2, 2)
     padding = (3, 3)
+    kernel_pool = 3
+    stride_pool = 2
     
-    model = CNNSpeechClassifier(channel_inputs=1, num_channels1=16,
-                                    num_channels2=32, kernel_size=kernel_size, stride=stride,
-                                    kernel_pool=2, padding=padding, num_classes=3)
-
+    model = CNNSpeechClassifier2D(channel_inputs=1, num_channels1=16,
+                                num_channels2=32, num_channels3=64, num_channels4=128,
+                                kernel_size=kernel_size, stride=stride,
+                                kernel_pool=kernel_pool, stride_pool=stride_pool, padding=padding, num_classes=3)
+    
 
     model.load_state_dict(checkpoint["model_state_dict"])
 
