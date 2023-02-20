@@ -58,7 +58,6 @@ class MyTrainer:
             save_ckp(val_loss, epoch, self.model, self.optimizer, self.loss_fn)
             early_stopping(val_loss)
 
-
             if early_stopping.early_stop:
                 early_stop_value = epoch+1
                 print(f"Early stopping at epoch {early_stop_value}") 
@@ -67,6 +66,7 @@ class MyTrainer:
             if not early_stop_value:
                 early_stop_value = None
             visualize(epochs, self.total_train_loss, self.total_val_loss, early_stop_value)
+
         save_model(epochs=epochs, model=self.model, optimizer=self.optimizer, criterion=self.loss_fn)
     
     def pretty_print(self, epoch, train_loss, val_loss, acc):

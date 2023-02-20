@@ -35,7 +35,11 @@ class CNNSpeechClassifier2D(nn.Module):
         x = self.cnn_layer1(x)
         x = self.cnn_layer2(x)
         x = self.cnn_layer3(x)
+        print(x.shape)
         x = self.cnn_layer4(x)
+
+        print(x.shape)
+        raise SystemExit
         # vectorizing image
         z = x.reshape(x.shape[0], -1)
         z = self.dropout(z)

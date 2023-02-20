@@ -56,40 +56,6 @@ def save_model(epochs, model, optimizer, criterion):
                 }, 'model_output/final_speech_cnn.pth')
 
 plt.style.use('ggplot')  # for visualize!
-class EarlyStopping:
-    """
-    Class to save the best model while training. If the current epoch's 
-    validation loss is less than the previous least less, then save the
-    model state.
-    """
-    def __init__(self, best_valid_loss=float('inf'), patience=3, delta=0):
-        self.best_valid_loss = best_valid_loss
-        #self.path = "./model_output/best_speech_cnn.pth"
-        self.path = "model_output/best_speech_cnn.pth"
-        self.patience = patience
-        self.delta = delta
-        self.counter = 0
-        self.early_stop = None
-        
-    def __call__(self, current_valid_loss, epoch, model, optimizer, criterion):
-
-        if current_valid_loss < self.best_valid_loss:
-            self.best_valid_loss = current_valid_loss
-            self.save_checkpoint(epoch, model, optimizer, criterion)
-            self.counter = 0
-        
-        elif current_valid_loss > (self.best_valid_loss + self.delta):
-            self.counter += 1
-            if self.counter > self.patience:
-                self.early_stop = True
-    
-    def save_checkpoint(self, epoch, model, optimizer, criterion):
-
-        print(f"\nBest validation loss: {self.best_valid_loss}")
-        print(f"\nSaving best model for epoch: {epoch+1}\n")
-        #torch.save({'epoch': epoch+1, 'model_state_dict': model.state_dict(),
-        #                'optimizer_state_dict': optimizer.state_dict(),
-        #                'loss': criterion}, self.path)
 
 class SaveBestModel:
     """
@@ -113,7 +79,7 @@ class SaveBestModel:
                         'loss': criterion}, self.path)
 
 
-class EarlyStopping():
+class EarlyStopping:
     """
     Early stopping to stop the training when the loss does not improve after
     certain epochs.
