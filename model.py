@@ -33,10 +33,11 @@ class CNNSpeechClassifier2D(nn.Module):
 
     def forward(self, x):
         x = self.cnn_layer1(x)
-
-        print(x.shape)
         x = self.cnn_layer2(x)
         x = self.cnn_layer3(x)
+
+        print(x.shape)
+        raise SystemExit
         x = self.cnn_layer4(x)
         # vectorizing image
         z = x.reshape(x.shape[0], -1)
